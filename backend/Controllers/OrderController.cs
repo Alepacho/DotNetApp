@@ -13,10 +13,12 @@ public class OrderController : ControllerBase
     };
 
     private readonly ILogger<OrderController> _logger;
+    private readonly OrderContext _db;
 
-    public OrderController(ILogger<OrderController> logger)
+    public OrderController(ILogger<OrderController> logger, OrderContext db)
     {
         _logger = logger;
+        _db     = db;
     }
 
     [HttpPost()]
@@ -31,6 +33,9 @@ public class OrderController : ControllerBase
                     Title = Titles[Random.Shared.Next(Titles.Length)],
                     Price = Random.Shared.Next(99, 1999)
                 };
+
+                _db.Orders.Add(newOrder);
+                _db.SaveChanges();
                 return newOrder;
             }));
         } catch (Exception e) {
@@ -44,14 +49,15 @@ public class OrderController : ControllerBase
     {
         try {
             return Ok(await Task.Run(() => {
-                return Enumerable.Range(1, 5).Select(index => new Order
-                {
-                    Id    = index,
-                    Date  = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Title = Titles[Random.Shared.Next(Titles.Length)],
-                    Price = Random.Shared.Next(99, 1999)
-                })
-                .ToArray();
+                return _db.Orders.ToList();
+                // return Enumerable.Range(1, 5).Select(index => new Order
+                // {
+                //     Id    = index,
+                //     Date  = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                //     Title = Titles[Random.Shared.Next(Titles.Length)],
+                //     Price = Random.Shared.Next(99, 1999)
+                // })
+                // .ToArray();
             }));
         } catch (Exception e) {
             return StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
@@ -62,15 +68,10 @@ public class OrderController : ControllerBase
     public async Task<ActionResult> GetByID(int id) // 
     {
         try {
-            return Ok(await Task.Run(() => {
-                return new Order
-                {
-                    Id    = 0,
-                    Date  = DateOnly.FromDateTime(DateTime.Now.AddDays(0)),
-                    Title = Titles[Random.Shared.Next(Titles.Length)],
-                    Price = Random.Shared.Next(99, 1999)
-                };
-            }));
+            var data = _db.Orders.First(item => item.Id == id);
+            if (data != null) {
+                return Ok(await Task.Run(() => { return data; }));
+            } else return NotFound($"Order with ID {id} not found");
         } catch (Exception e) {
             return StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
         }
@@ -81,8 +82,14 @@ public class OrderController : ControllerBase
     {
         _logger.LogInformation("Deleting order {}", id);
         try {
-            return Ok(await Task.Run(() => { return "Good :)"; }));
-            return NotFound($"Order with ID {id} not found");
+            var data = _db.Orders.First(item => item.Id == id);
+            if (data != null) {
+                _db.Orders.Remove(data);
+                _db.SaveChanges();
+                return Ok(await Task.Run(() => { return data; }));
+            } else return NotFound($"Order with ID {id} not found");
+            
+            
         } catch (Exception e) {
             return StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
         }
