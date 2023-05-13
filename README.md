@@ -18,6 +18,7 @@
 ## Как запустить
 
 dotnet watch run --project ./backend/WEBAPIapp.csproj 
+
 dotnet watch run --project ./frontend/MVCapp.csproj
 
 Добавить новые заказы можно через Swagger UI (/order/post).
