@@ -1,8 +1,33 @@
-﻿@{
+﻿@model IEnumerable<MVCapp.Models.OrderViewModel>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4"> Таблица заказов </h1>
+    @* <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p> *@
+
+    <table class="table orders">
+        @* https://www.tutorialsteacher.com/webapi/consume-web-api-get-method-in-aspnet-mvc *@
+        @foreach (var item in Model) {
+            <tr>
+                @* <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td> *@
+                @* <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td> *@
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </table>
 </div>
