@@ -79,8 +79,9 @@ public class OrderController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<ActionResult<Order>> Delete(int id)
     {
-        // _logger.LogInformation("Deleting order {}", orderId);
+        _logger.LogInformation("Deleting order {}", id);
         try {
+            return Ok(await Task.Run(() => { return "Good :)"; }));
             return NotFound($"Order with ID {id} not found");
         } catch (Exception e) {
             return StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
