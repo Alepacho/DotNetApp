@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using WEBAPIapp.Models;
 
 namespace WEBAPIapp.Controllers;
 

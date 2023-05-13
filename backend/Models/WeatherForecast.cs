@@ -1,4 +1,4 @@
-namespace WEBAPIapp;
+namespace WEBAPIapp.Models;
 
 public class WeatherForecast
 {
